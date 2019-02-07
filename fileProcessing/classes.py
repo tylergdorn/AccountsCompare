@@ -5,8 +5,9 @@ class Record:
         self.invoiceNo = invoiceNo
         self.date = date
         self.agencyName = agencyName
-        self.totalDue = totalDue
-        self.line = line
+        self.totalDue = float(totalDue)
+        self.line = [] 
+        self.line.append(line)
 
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)

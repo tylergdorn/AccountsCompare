@@ -3,6 +3,8 @@
 Hello World, but with more meat.
 """
 
+# import wxversion
+# wxversion.select('3.0')
 import wx
 
 class HelloFrame(wx.Frame):

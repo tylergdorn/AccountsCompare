@@ -11,9 +11,10 @@ def loadAlProCSV(filePath):
     res = []
     with open(filePath, 'r', encoding="utf8", errors="replace") as csvfile:
         csvReader = csv.reader(csvfile, delimiter=',')
+        next(csvReader) # skip the header
         i = 1
         for row in csvReader:
-            i += 1
+            i += 1 # counting the line numbers the lazy way
             record = classes.Record(row[0], row[1], row[2], row[3], i)
             res.append(record)
     return res
@@ -26,14 +27,21 @@ def loadQBFile(filePath):
     wb = load_workbook(filename=filePath, read_only=True)
     # Load the worksheet
     ws = wb['Sheet1']
-    rows = []
+    # using a hashmap so we can consolidate the values down
+    consolidate = {}
     # magic number 3 is because after 3 is where the important data starts
     ws.calculate_dimension(force=True)
     for index, item in enumerate(ws.rows):
         # iterate through all rows and load them into our array
         if 3 <= index <= ws.max_row:
-            rows.append(_loadRow(item, index))
-    return rows
+            record = _loadRow(item, index)
+            if record.invoiceNo in consolidate:
+                # if there is a collision we add the line number for usability and increment the totaldue amount
+                consolidate[record.invoiceNo].totalDue += record.totalDue
+                consolidate[record.invoiceNo].line.append(record.line)
+            else:
+                consolidate[record.invoiceNo] = record
+    return consolidate.values
     
 def _loadRow(row, rowNo):
     # A bit weird here. the numbers correspond to the position in a row, ie H is 7
