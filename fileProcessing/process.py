@@ -30,12 +30,16 @@ def loadQBFile(filePath):
     # magic number 3 is because after 3 is where the important data starts
     ws.calculate_dimension(force=True)
     print()
-    for i in range(3, ws.max_row):
-        print(i)
-        rows.append(_loadRow(ws, i))
+    for item in ws.rows:
+        print(item)
+    # for i in range(3, ws.max_row):
+    #     print(i)
+    #     rows.append(_loadRow(ws, i))
     return rows
     
 def _loadRow(worksheet, rowNo):
     row = str(rowNo)
     return classes.Record(worksheet['H' + row].value, worksheet['F' + row].value, worksheet['J' + row].value, worksheet['V' + row].value, rowNo)
+
+def _loadRow2(row):
 
