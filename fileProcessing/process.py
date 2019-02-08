@@ -5,7 +5,7 @@ from fileProcessing import classes
 
 def loadAlProCSV(filePath):
     """
-    This loads an AL-Pro CSV file with ',' as the delimiter. We may need to change this to accomodate better cases.
+    This loads an AL-Pro CSV file with '\t' as the delimiter. We may need to change this to accomodate better cases.
     This returns an array of Records
     """
     res = []
@@ -15,11 +15,11 @@ def loadAlProCSV(filePath):
         i = 1
         for row in csvReader:
             i += 1 # counting the line numbers the lazy way
-            record = classes.Record(row[0], row[1], row[2], row[3] if row[3] else 0, i)
+            record = classes.Record(row[0], row[1], row[2], row[3] if row[3] else 0, i, True)
             res.append(record)
     return res
 
-def loadQBFile(filePath):
+def loadQBFile(filePath: str) -> classes.Record:
     """
     This method loads a given file and returns an array of Records. A lot of this is hardcoded in so if the format of the QB file changes we will need to fix that. 
     We might want to think of a better way to do this.
@@ -36,6 +36,7 @@ def loadQBFile(filePath):
         # minus two because of the annoying sum at the bottom
         if 3 <= index < (ws.max_row - 2):
             record = _loadRow(item, index)
+            record.invoiceNo = record.invoiceNo[:5]
             if record.invoiceNo in consolidate:
                 # if there is a collision we add the line number for usability and increment the totaldue amount
                 consolidate[record.invoiceNo].totalDue += record.totalDue
@@ -47,4 +48,4 @@ def loadQBFile(filePath):
     
 def _loadRow(row, rowNo):
     # A bit weird here. the numbers correspond to the position in a row, ie H is 7
-    return classes.Record(row[7].value, row[5].value, row[9].value, row[21].value, rowNo)
+    return classes.Record(row[7].value, row[5].value, row[9].value, row[21].value, rowNo, False)
