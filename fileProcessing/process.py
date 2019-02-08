@@ -36,16 +36,18 @@ def loadQBFile(filePath: str) -> classes.Record:
         # minus two because of the annoying sum at the bottom
         if 3 <= index < (ws.max_row - 2):
             record = _loadRow(item, index)
-            record.invoiceNo = record.invoiceNo[:5]
-            if record.invoiceNo in consolidate:
-                # if there is a collision we add the line number for usability and increment the totaldue amount
-                consolidate[record.invoiceNo].totalDue += record.totalDue
-                consolidate[record.invoiceNo].line.append(record.line)
-            else:
-                consolidate[record.invoiceNo] = record
-    # make a list out of the values so we can iterate
+            if record:
+                record.invoiceNo = record.invoiceNo[:5]
+                if record.invoiceNo in consolidate:
+                    # if there is a collision we add the line number for usability and increment the totaldue amount
+                    consolidate[record.invoiceNo].totalDue += record.totalDue
+                    consolidate[record.invoiceNo].line.append(record.line)
+                else:
+                    consolidate[record.invoiceNo] = record
+        # make a list out of the values so we can iterate
     return list(consolidate.values())
     
 def _loadRow(row, rowNo):
     # A bit weird here. the numbers correspond to the position in a row, ie H is 7
-    return classes.Record(row[7].value, row[5].value, row[9].value, row[21].value, rowNo, False)
+    # extra weird now that I added stuff. Apparently we only care about the accounts receiveable because that's how accounting works
+    return classes.Record(row[7].value, row[5].value, row[9].value, row[21].value, rowNo, False) if "Accounts Receivable" in row[13].value else None
