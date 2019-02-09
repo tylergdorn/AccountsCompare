@@ -16,4 +16,5 @@ def compare(alProList, QBList):
             
     for item in expDict.values():
         errors.append(classes.MissingResult(item))
-    return errors#.sort(key=lambda item: item.record.invoiceNo)
+    # return errors
+    return sorted(errors, key=lambda error: error.record.invoiceNo)

@@ -17,9 +17,10 @@ def loadAlProCSV(filePath):
             i += 1 # counting the line numbers the lazy way
             record = classes.Record(row[0], row[1], row[2], row[3] if row[3] else 0, i, True)
             res.append(record)
+    csvfile.close()
     return res
 
-def loadQBFile(filePath: str) -> classes.Record:
+def loadQBFile(filePath: "str") -> "classes.Record[]":
     """
     This method loads a given file and returns an array of Records. A lot of this is hardcoded in so if the format of the QB file changes we will need to fix that. 
     We might want to think of a better way to do this.
@@ -34,7 +35,7 @@ def loadQBFile(filePath: str) -> classes.Record:
     for index, item in enumerate(ws.rows):
         # iterate through all rows and load them into our array
         # minus two because of the annoying sum at the bottom
-        if 3 <= index < (ws.max_row - 2):
+        if 2 <= index < (ws.max_row - 2):
             record = _loadRow(item, index)
             if record:
                 record.invoiceNo = record.invoiceNo[:5]
@@ -45,6 +46,7 @@ def loadQBFile(filePath: str) -> classes.Record:
                 else:
                     consolidate[record.invoiceNo] = record
         # make a list out of the values so we can iterate
+    wb.close()
     return list(consolidate.values())
     
 def _loadRow(row, rowNo):
