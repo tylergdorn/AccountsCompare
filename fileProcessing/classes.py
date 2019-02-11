@@ -1,4 +1,6 @@
-# Defined classes for our data records
+"""
+    Defined classes for our data records
+"""
 
 class Record: 
     """Record is the holder for a sequence of data corresponding to a line in the csv or xlsx documents"""

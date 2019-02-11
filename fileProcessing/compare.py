@@ -1,3 +1,5 @@
+"""compare is where our comparison code lives, and serves to compare the two lists of items"""
+
 from typing import List
 
 import fileProcessing.classes as classes

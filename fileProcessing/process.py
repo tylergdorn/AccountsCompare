@@ -1,3 +1,5 @@
+"""Process is where we load all files into a standard format"""
+
 import csv
 from openpyxl import load_workbook
 from typing import List
