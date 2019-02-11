@@ -22,5 +22,5 @@ def compare(alProList, QBList):
     # after we look through all of them, we go through the remaining ones since those are not in the list of quickbook items
     for item in expDict.values():
         errors.append(classes.MissingResult(item))
-    # return errors
+    # return errors sorted by invoice number
     return sorted(errors, key=lambda error: error.record.invoiceNo)

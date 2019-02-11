@@ -3,9 +3,11 @@ import fileProcessing as fp
 from fileProcessing import process
 from fileProcessing import compare
 from fileProcessing import errors as err
+import os
 
 def processInput(alProFile, QBFile):
     results = []
+    # catch all exceptions so we can get the right pop up
     try:
         alProList = process.loadAlProCSV(alProFile)
         QBList = process.loadQBFile(QBFile)
@@ -13,6 +15,7 @@ def processInput(alProFile, QBFile):
         sg.PopupError("Couldn't load files. You may have exported them wrong")
         exit(-1)
     try:
+        # get all the errors that come up and print them all
         errors = compare.compare(alProList, QBList)
         for item in errors:
             results.append(str(item))
@@ -40,7 +43,7 @@ def mainGui():
         result = processInput(values[0], values[1])
         # layout of the results
         resultLayout = [
-            [sg.Multiline(default_text=result, size=(100, 50), disabled=True)],
+            [sg.Multiline(default_text=result, size=(130, 50), disabled=True)],
             [sg.Text('Choose a folder to save process.log to', size=(30, 1), auto_size_text=False, justification='right'),
                 sg.InputText(), sg.FolderBrowse()],
             [sg.Save(tooltip='Click to submit this window'), sg.Cancel()]
