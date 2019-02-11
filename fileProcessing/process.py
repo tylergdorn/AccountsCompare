@@ -1,11 +1,14 @@
 import csv
 from openpyxl import load_workbook
+from typing import List
 
 from fileProcessing import classes
+from fileProcessing import errors
 
-def loadAlProCSV(filePath):
+@errors.FileLoadDecorator
+def loadAlProCSV(filePath: str) -> List[classes.Record]:
     """
-    This loads an AL-Pro CSV file with '\t' as the delimiter. We may need to change this to accomodate better cases.
+    This loads an AL-Pro CSV file with '\t' as the delimiter. We may need to change this to accommodate better cases.
     This returns an array of Records
     """
     res = []
@@ -20,7 +23,8 @@ def loadAlProCSV(filePath):
     csvfile.close()
     return res
 
-def loadQBFile(filePath: "str") -> "classes.Record[]":
+@errors.FileLoadDecorator
+def loadQBFile(filePath: str) -> List[classes.Record]:
     """
     This method loads a given file and returns an array of Records. A lot of this is hardcoded in so if the format of the QB file changes we will need to fix that. 
     We might want to think of a better way to do this.
