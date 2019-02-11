@@ -20,9 +20,9 @@ def FileLoadDecorator(function):
 
 def ComparisonDecorator(function):
     """Similar to FileLoadDecorator, but for the comparison"""
-    def wrapper(name):
+    def wrapper(first, second):
         try:
-            return function(name)
+            return function(first, second)
         except Exception:
             raise ComparisonError
     return wrapper

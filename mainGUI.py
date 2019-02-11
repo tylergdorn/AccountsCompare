@@ -6,7 +6,7 @@ from fileProcessing import errors as err
 import os
 
 def processInput(alProFile, QBFile):
-    results = []
+    """This takes the file names and interacts with fileProcessing and returns a list of all the errors recorded"""
     # catch all exceptions so we can get the right pop up
     try:
         alProList = process.loadAlProCSV(alProFile)
@@ -17,6 +17,7 @@ def processInput(alProFile, QBFile):
     try:
         # get all the errors that come up and print them all
         errors = compare.compare(alProList, QBList)
+        results = []
         for item in errors:
             results.append(str(item))
         return '\n'.join(results)
