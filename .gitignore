@@ -60,3 +60,4 @@ target/
 .vscode
 data
 out.txt
+.pylintrc
