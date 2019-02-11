@@ -1,7 +1,10 @@
+from typing import List
+
 import fileProcessing.classes as classes
 import fileProcessing.errors as errors
+
 @errors.ComparisonDecorator
-def compare(alProList, QBList):
+def compare(alProList: List[classes.Record], QBList: List[classes.Record]):
     """This takes a list of records corresponding to the Al-Pro items and QBList and returns a list of MissingResults and MismatchResults"""
     expDict = {} 
     count = 0

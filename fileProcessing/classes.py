@@ -18,13 +18,13 @@ class Record:
     def __eq__(self, other):
         return self.invoiceNo == other.invoiceNo and self.totalDue == other.totalDue
 
-def intToStr(number):
+def intToStr(number: int) -> str:
     """Helper function that takes an int representing a number of cents and returns a string representing a number of """
     return f'{number // 100}.{number % 100}'
 
 class MissingResult:
     """The holder for an error where one record is not present in the other"""
-    def __init__(self, record):
+    def __init__(self, record: Record):
         self.record = record
         self.recordType = 'Al-Pro' if self.record.alPro else 'Quickbooks'
         self.otherType = 'Al-Pro' if not self.record.alPro else 'Quickbooks'
@@ -34,7 +34,7 @@ class MissingResult:
 
 class MismatchResult:
     """The holder for the error where the totalDue of one is not the totalDue of the other"""
-    def __init__(self, record, other):
+    def __init__(self, record: Record, other: Record):
         self.record = record
         self.other = other
         self.recordType = 'Al-Pro' if self.record.alPro else 'Quickbooks'

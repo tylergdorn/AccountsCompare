@@ -54,7 +54,8 @@ def loadQBFile(filePath: str) -> List[classes.Record]:
     wb.close()
     return list(consolidate.values())
     
-def _loadRow(row, rowNo):
+def _loadRow(row, rowNo) -> classes.Record:
+    """_loadRow takes a row from a openpyxl workbook and returns a Record corresponding to the row. the Row no is passed along just to build the Record"""
     # A bit weird here. the numbers correspond to the position in a row, ie H is 7
     # extra weird now that I added stuff. Apparently we only care about the accounts receiveable because that's how accounting works
     return classes.Record(row[7].value, row[5].value, row[9].value, row[21].value, rowNo, False) if "Accounts Receivable" in row[13].value else None
