@@ -15,13 +15,12 @@ def loadAlProCSV(filePath: str) -> List[classes.Record]:
     """
     res = []
     with open(filePath, 'r', encoding="utf8", errors="replace") as csvfile:
-        csvReader = csv.reader(csvfile, delimiter='\t')
-        next(csvReader) # skip the header
+        csvReader = csv.DictReader(csvfile, delimiter='\t')
         i = 1
         for row in csvReader:
             i += 1 # counting the line numbers the lazy way
             # pass it all into Record
-            record = classes.Record(row[0], row[1], row[2], row[3] if row[3] else 0, i, True)
+            record = classes.Record(row["InvoiceNo"], row["InvoiceDate"], row["AgencyName"], row["TotalDue"] if row["TotalDue"] else 0, i, True)
             res.append(record)
     csvfile.close()
     return res

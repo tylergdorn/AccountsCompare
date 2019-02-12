@@ -1,4 +1,5 @@
 import PySimpleGUI as sg      
+import logging
 import fileProcessing as fp
 from fileProcessing import process
 from fileProcessing import compare
@@ -11,7 +12,7 @@ def processInput(alProFile, QBFile):
     try:
         alProList = process.loadAlProCSV(alProFile)
         QBList = process.loadQBFile(QBFile)
-    except err.FileLoadError as error:
+    except err.FileLoadError:
         sg.PopupError("Couldn't load files. You may have exported them wrong")
         exit(-1)
     try:
@@ -21,7 +22,7 @@ def processInput(alProFile, QBFile):
         for item in errors:
             results.append(str(item))
         return '\n'.join(results)
-    except err.ComparisonError as er:
+    except err.ComparisonError:
         sg.PopupError("Couldn't compare files.")
         exit(-1)
 
@@ -64,5 +65,6 @@ def mainGui():
                     file.write(result)
         resultWindow.Close()
 # call our program
+logging.basicConfig(level=logging.ERROR, filename="error.log")
 mainGui()
 

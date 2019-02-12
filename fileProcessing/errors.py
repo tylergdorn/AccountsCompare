@@ -1,6 +1,8 @@
 """
     Standard error handling for our program
 """
+import logging
+
 class FileLoadError(Exception):
     """Error when the file is loaded incorrectly"""
     pass
@@ -15,6 +17,7 @@ def FileLoadDecorator(function):
         try:
             return function(name)
         except Exception:
+            logging.exception("Serious error parsing file")
             raise FileLoadError
     return wrapper
 
@@ -24,5 +27,6 @@ def ComparisonDecorator(function):
         try:
             return function(first, second)
         except Exception:
+            logging.exception("Serious error parsing file")
             raise ComparisonError
     return wrapper
