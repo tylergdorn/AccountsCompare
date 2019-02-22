@@ -27,8 +27,9 @@ def compare(alProList: List[classes.Record], QBList: List[classes.Record]):
             # we delete it if it matches
             del expDict[item.invoiceNo]
             count += 1
-    # after we look through all of them, we go through the remaining ones since those are not in the list of quickbook items
-    for item in expDict.values():
-        errors.append(classes.MissingResult(item))
-    # return errors sorted by invoice number
+    # All this is actually unnecessary to do
+        # after we look through all of them, we go through the remaining ones since those are not in the list of quickbook items
+        # for item in expDict.values():
+        #     errors.append(classes.MissingResult(item))
+        # return errors sorted by invoice number
     return sorted(errors, key=lambda error: error.record.invoiceNo)

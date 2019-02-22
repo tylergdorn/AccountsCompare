@@ -45,7 +45,7 @@ def mainGui():
         result = processInput(values[0], values[1])
         # layout of the results
         resultLayout = [
-            [sg.Multiline(default_text=result, size=(130, 50), disabled=True)],
+            [sg.Multiline(default_text=result, size=(130, 30), disabled=True)],
             [sg.Text('Choose a folder to save process.log to', size=(30, 1), auto_size_text=False, justification='right'),
                 sg.InputText(), sg.FolderBrowse()],
             [sg.Save(tooltip='Click to submit this window'), sg.Cancel()]

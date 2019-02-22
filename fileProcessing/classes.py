@@ -28,20 +28,16 @@ class MissingResult:
     """The holder for an error where one record is not present in the other"""
     def __init__(self, record: Record):
         self.record = record
-        self.recordType = 'Al-Pro' if self.record.alPro else 'Quickbooks'
-        self.otherType = 'Al-Pro' if not self.record.alPro else 'Quickbooks'
         
     def __str__(self):
-       return f'{self.recordType} invoice number {self.record.invoiceNo} - {self.record.agencyName} not found in {self.otherType}'
+       return f'Quickbooks invoice number {self.record.invoiceNo} - {self.record.agencyName} not found in Al-Pro'
 
 class MismatchResult:
     """The holder for the error where the totalDue of one is not the totalDue of the other"""
     def __init__(self, record: Record, other: Record):
         self.record = record
         self.other = other
-        self.recordType = 'Al-Pro' if self.record.alPro else 'Quickbooks'
-        self.otherType = 'Al-Pro' if self.other.alPro else 'Quickbooks'
 
     def __str__(self):
-        return f'{self.recordType} Invoice number {self.record.invoiceNo} - {self.record.agencyName} amount {intToStr(self.record.totalDue)} does not match {self.otherType} amount {intToStr(self.other.totalDue)}'
+        return f'Quickbooks Invoice number {self.record.invoiceNo} - {self.record.agencyName} amount {intToStr(self.record.totalDue)} does not match Al-Pro (date: {self.other.date}) amount {intToStr(self.other.totalDue)}'
     
