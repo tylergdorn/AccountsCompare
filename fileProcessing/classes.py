@@ -30,14 +30,18 @@ class MissingResult:
         self.record = record
         
     def __str__(self):
-       return f'Quickbooks invoice number {self.record.invoiceNo} - {self.record.agencyName} not found in Al-Pro'
+       return f'Al-Pro invoice number {self.record.invoiceNo} - {self.record.agencyName} - {self.record.date} not found in QuickBooks'
 
 class MismatchResult:
     """The holder for the error where the totalDue of one is not the totalDue of the other"""
     def __init__(self, record: Record, other: Record):
         self.record = record
         self.other = other
+        self.recordType = 'Al-Pro' if self.record.alPro else 'Quickbooks'
+        self.otherType = 'Al-Pro' if self.other.alPro else 'Quickbooks'
 
     def __str__(self):
         return f'Quickbooks Invoice number {self.record.invoiceNo} - {self.record.agencyName} amount {intToStr(self.record.totalDue)} does not match Al-Pro (date: {self.other.date}) amount {intToStr(self.other.totalDue)}'
+
+   
     

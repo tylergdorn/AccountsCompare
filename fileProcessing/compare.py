@@ -17,19 +17,20 @@ def compare(alProList: List[classes.Record], QBList: List[classes.Record]):
     for item in QBList:
         # Then we look at each quickbook item and check if they're there
         if item.invoiceNo not in expDict:
-            errors.append(classes.MissingResult(item))
+            pass
+            # errors.append(classes.MissingResult(item))
         # We check then if they're there if the amount due matches the expected amount (the alpro amount)
         elif expDict[item.invoiceNo].totalDue != item.totalDue:
-            errors.append(classes.MismatchResult(item, expDict[item.invoiceNo]))
+            # We don't do anything with it now i guess
+            # errors.append(classes.MismatchResult(item, expDict[item.invoiceNo]))
             # we delete if it doesn't match, because it has been dealt with
             del expDict[item.invoiceNo]
         else:
             # we delete it if it matches
             del expDict[item.invoiceNo]
             count += 1
-    # All this is actually unnecessary to do
         # after we look through all of them, we go through the remaining ones since those are not in the list of quickbook items
-        # for item in expDict.values():
-        #     errors.append(classes.MissingResult(item))
+        for item in expDict.values():
+            errors.append(classes.MissingResult(item))
         # return errors sorted by invoice number
     return sorted(errors, key=lambda error: error.record.invoiceNo)
