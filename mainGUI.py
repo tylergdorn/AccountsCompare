@@ -6,7 +6,7 @@ from fileProcessing import compare
 from fileProcessing import errors as err
 import os
 
-def processInput(alProFile, QBFile):
+def processInput(alProFile: str, QBFile: str) -> str:
     """This takes the file names and interacts with fileProcessing and returns a list of all the errors recorded"""
     # catch all exceptions so we can get the right pop up
     try:
@@ -19,11 +19,13 @@ def processInput(alProFile, QBFile):
         # get all the errors that come up and print them all
         errors = compare.compare(alProList, QBList)
         results = []
+        # Get all the errors into a nice format and turn them into a string
         for item in errors:
             results.append(str(item))
         return '\n'.join(results)
     except err.ComparisonError:
-        sg.PopupError("Couldn't compare files.")
+        # I have no idea when this would happen
+        sg.PopupError("Couldn't compare files. Something bad happened.")
         exit(-1)
 
 def mainGui():
@@ -64,6 +66,7 @@ def mainGui():
                 with open('comparison.log', 'w') as file:
                     file.write(result)
         resultWindow.Close()
+
 # call our program
 logging.basicConfig(level=logging.ERROR, filename="error.log")
 mainGui()

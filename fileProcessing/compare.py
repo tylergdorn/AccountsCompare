@@ -6,7 +6,7 @@ import fileProcessing.classes as classes
 import fileProcessing.errors as errors
 
 @errors.ComparisonDecorator
-def compare(alProList: List[classes.Record], QBList: List[classes.Record]):
+def compare(alProList: List[classes.Record], QBList: List[classes.Record]) -> List[classes.Result]:
     """This takes a list of records corresponding to the Al-Pro items and QBList and returns a list of MissingResults and MismatchResults"""
     alproDictionary = {} 
     count = 0
