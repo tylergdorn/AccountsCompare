@@ -11,6 +11,8 @@ def compare(alProList: List[classes.Record], QBList: List[classes.Record]) -> Li
     alproDictionary = {} 
     count = 0
     errors = []
+    # print(QBList[0])
+    # print(QBList[len(QBList) - 1])
     # we load all the alpro errors into a dict
     for item in alProList:
         alproDictionary[item.invoiceNo] = item

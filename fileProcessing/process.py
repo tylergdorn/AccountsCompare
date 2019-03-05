@@ -7,6 +7,38 @@ from typing import List, Union
 from fileProcessing import classes
 from fileProcessing import errors
 
+class qbFormat:
+    """Holder for the format of our quickbooks file"""
+    def __init__(self, num: int, date: int, name: int, amount: int, account: int):
+        self.num = num
+        self.date = date
+        self.name = name
+        self.amount = amount
+        self.account = account
+
+def findQBHeader(indexRow: List) -> qbFormat:
+    """ When given the first row in a quickbooks export, it gives us a qbFormat of where to find all the data in each row"""
+    indexes = [None] * 5
+    for index, item in enumerate(indexRow):
+        # check for the headers we want
+        # print(f'value: "{item.value}" type: {type(item.value)}')
+        if item.value == "Num":
+            indexes[0] = index
+        elif item.value == "Date":
+            indexes[1] = index
+        elif item.value == "Name":
+            indexes[2] = index
+        elif item.value == "Amount":
+            indexes[3] = index
+        elif item.value == "Account":
+            indexes[4] = index
+    for item in indexes:
+        # if any of them are still None we raise an error
+        if not item:
+            raise errors.FileLoadError("Failed to load quickbooks header")
+    # sick hack here to make my life easier
+    return qbFormat(*indexes)
+
 @errors.FileLoadDecorator
 def loadAlProCSV(filePath: str) -> List[classes.Record]:
     """
@@ -38,11 +70,14 @@ def loadQBFile(filePath: str) -> List[classes.Record]:
     consolidate = {}
     # magic number 3 is because after 3 is where the important data starts
     ws.calculate_dimension(force=True)
+    # we find the rows we want
+    header = findQBHeader(next(ws.rows))
+    # print(ws.max_row)
     for index, item in enumerate(ws.rows):
         # iterate through all rows and load them into our array
         # minus two because of the annoying sum at the bottom
-        if 2 <= index < (ws.max_row - 2):
-            record = _loadRow(item, index)
+        if 1 <= index < (ws.max_row - 3):
+            record = _loadRow(item, index, header)
             if record:
                 record.invoiceNo = record.invoiceNo[:5]
                 if record.invoiceNo in consolidate:
@@ -55,9 +90,8 @@ def loadQBFile(filePath: str) -> List[classes.Record]:
     wb.close()
     return list(consolidate.values())
     
-def _loadRow(row, rowNo) -> Union[classes.Record, None]:
+def _loadRow(row: List, rowNo: int, head: qbFormat) -> Union[classes.Record, None]:
     """_loadRow takes a row from a openpyxl workbook and returns a Record corresponding to the row. the Row no is passed along just to build the Record"""
     """ Returns None if we don't care about the row in question"""
-    # A bit weird here. the numbers correspond to the position in a row, ie H is 7
-    # extra weird now that I added stuff. Apparently we only care about the accounts receiveable because that's how accounting works
-    return classes.Record(row[7].value, row[5].value, row[9].value, row[21].value, rowNo, False) if "Accounts Receivable" in row[13].value else None
+    # if this is accounts receivable we return none. else we use the header data to tell us where to get the info
+    return classes.Record(row[head.num].value, row[head.date].value, row[head.name].value, row[head.amount].value, rowNo, False) if "Accounts Receivable" in row[head.account].value else None

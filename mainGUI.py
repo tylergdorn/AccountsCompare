@@ -5,6 +5,7 @@ from fileProcessing import process
 from fileProcessing import compare
 from fileProcessing import errors as err
 import os
+import sys
 
 def processInput(alProFile: str, QBFile: str) -> str:
     """This takes the file names and interacts with fileProcessing and returns a list of all the errors recorded"""
@@ -68,6 +69,14 @@ def mainGui():
         resultWindow.Close()
 
 # call our program
-logging.basicConfig(level=logging.ERROR, filename="error.log")
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+# logging.basicConfig(level=logging.ERROR, filename="error.log")
+handler = logging.StreamHandler(sys.stdout)
+root.addHandler(handler)
+handle2 = logging.FileHandler("error.log")
+handle2.setLevel(logging.ERROR)
+root.addHandler(handle2)
 mainGui()
 
