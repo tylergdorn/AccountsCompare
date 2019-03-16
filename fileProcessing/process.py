@@ -52,7 +52,8 @@ def loadAlProCSV(filePath: str) -> List[classes.Record]:
         for row in csvReader:
             i += 1 # counting the line numbers the lazy way
             # check if it's negative the lazy way
-            if row["TotalDue"][0] != '-':
+            float(row["TotalDue"])
+            if float(row["TotalDue"]) > 0:
                 # pass it all into Record if it's not negative
                 record = classes.Record(row["InvoiceNo"], row["InvoiceDate"], row["AgencyName"], row["TotalDue"] if row["TotalDue"] else 0, i, True)
                 res.append(record)
