@@ -1,27 +1,26 @@
 """compare is where our comparison code lives, and serves to compare the two lists of items"""
 
-from typing import List
+from typing import List, Union
 
 import fileProcessing.classes as classes
-import fileProcessing.errors as errors
+import fileProcessing.errors as fperrors
 
-@errors.ComparisonDecorator
+@fperrors.ComparisonDecorator
 def compare(alProList: List[classes.Record], QBList: List[classes.Record]) -> List[classes.Result]:
     """This takes a list of records corresponding to the Al-Pro items and QBList and returns a list of MissingResults and MismatchResults"""
     alproDictionary = {} 
     count = 0
-    errors = []
-    # print(QBList[0])
-    # print(QBList[len(QBList) - 1])
+    errors: List[classes.Result] = []
+
     # we load all the alpro errors into a dict
     for item in alProList:
         alproDictionary[item.invoiceNo] = item
-    print(len(alproDictionary))
+
     for item in QBList:
         # Then we look at each quickbook item and check if they're there
         if item.invoiceNo not in alproDictionary:
+            # this is pass because we don't care about items in qb not in alpro
             pass
-            # errors.append(classes.MissingResult(item))
         # We check then if they're there if the amount due matches the expected amount (the alpro amount)
         elif alproDictionary[item.invoiceNo].totalDue != item.totalDue:
             errors.append(classes.MismatchResult(item, alproDictionary[item.invoiceNo]))
@@ -35,4 +34,4 @@ def compare(alProList: List[classes.Record], QBList: List[classes.Record]) -> Li
     for item in alproDictionary.values():
         errors.append(classes.MissingResult(item))
     # return errors sorted by invoice number
-    return sorted(errors, key=lambda error: error.record.invoiceNo)
+    return sorted(errors, key=lambda errorRes: errorRes.record.invoiceNo)

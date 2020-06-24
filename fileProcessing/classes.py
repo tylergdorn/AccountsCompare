@@ -1,6 +1,7 @@
 """
     Defined classes for our data records
 """
+from abc import ABC, abstractmethod
 
 class Record: 
     """Record is the holder for a sequence of data corresponding to a line in the csv or xlsx documents"""
@@ -14,10 +15,12 @@ class Record:
         self.line.append(line)
         self.alPro = alPro
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__class__) + ": " + str(self.__dict__)
     
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Record):
+            return False
         return self.invoiceNo == other.invoiceNo and self.totalDue == other.totalDue
 
 def intToStr(number: int) -> str:
@@ -26,13 +29,13 @@ def intToStr(number: int) -> str:
 
 class Result:
     """This is just here to use for type hints. Both the result classes are basically strings anyway"""
-    pass
+    record: Record
 class MissingResult(Result):
     """The holder for an error where one record is not present in the other"""
     def __init__(self, record: Record):
         self.record = record
         
-    def __str__(self):
+    def __str__(self) -> str:
        return f'Al-Pro invoice number {self.record.invoiceNo} - {self.record.agencyName} - {self.record.date} not found in QuickBooks'
 
 class MismatchResult(Result):
@@ -43,7 +46,7 @@ class MismatchResult(Result):
         self.recordType = 'Al-Pro' if self.record.alPro else 'Quickbooks'
         self.otherType = 'Al-Pro' if self.other.alPro else 'Quickbooks'
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Quickbooks Invoice number {self.record.invoiceNo} - {self.record.agencyName} amount {intToStr(self.record.totalDue)} does not match Al-Pro (date: {self.other.date}) amount {intToStr(self.other.totalDue)}'
 
    

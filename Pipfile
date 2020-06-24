@@ -5,11 +5,12 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
-pyinstaller = "*"
+pyinstaller = ">=3.6"
+mypy = "*"
 
 [packages]
 openpyxl = "*"
 pysimplegui = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

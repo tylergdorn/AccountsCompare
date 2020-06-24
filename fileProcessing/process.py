@@ -2,7 +2,7 @@
 
 import csv
 from openpyxl import load_workbook
-from typing import List, Union
+from typing import List, Union, Optional, Dict
 
 from fileProcessing import classes
 from fileProcessing import errors
@@ -16,12 +16,10 @@ class qbFormat:
         self.amount = amount
         self.account = account
 
-def findQBHeader(indexRow: List) -> qbFormat:
+def findQBHeader(indexRow: List) -> qbFormat: #type: ignore
     """ When given the first row in a quickbooks export, it gives us a qbFormat of where to find all the data in each row"""
-    indexes = [None] * 5
+    indexes: List[Optional[int]] = [None] * 5
     for index, item in enumerate(indexRow):
-        # check for the headers we want
-        # print(f'value: "{item.value}" type: {type(item.value)}')
         if item.value == "Num":
             indexes[0] = index
         elif item.value == "Date":
@@ -36,8 +34,7 @@ def findQBHeader(indexRow: List) -> qbFormat:
         # if any of them are still None we raise an error
         if not item:
             raise errors.FileLoadError("Failed to load quickbooks header")
-    # sick hack here to make my life easier
-    return qbFormat(*indexes)
+    return qbFormat(*indexes) #type: ignore
 
 @errors.FileLoadDecorator
 def loadAlProCSV(filePath: str) -> List[classes.Record]:
@@ -60,7 +57,7 @@ def loadAlProCSV(filePath: str) -> List[classes.Record]:
             # if it's less than zero we dont' care
             if num > 0:
                 # pass it all into Record if it's not negative
-                record = classes.Record(row["InvoiceNo"], row["InvoiceDate"], row["AgencyName"], row["TotalDue"] if row["TotalDue"] else 0, i, True)
+                record = classes.Record(row["InvoiceNo"], row["InvoiceDate"], row["AgencyName"], row["TotalDue"] if row["TotalDue"] else "0", i, True)
                 res.append(record)
     csvfile.close()
     return res
@@ -72,34 +69,35 @@ def loadQBFile(filePath: str) -> List[classes.Record]:
     We might want to think of a better way to do this.
     """
     wb = load_workbook(filename=filePath, read_only=True)
-    # Load the worksheet
     ws = wb['Sheet1']
-    # using a hashmap so we can consolidate the values down
-    consolidate = {}
-    # magic number 3 is because after 3 is where the important data starts
+    consolidate: Dict[str, classes.Record] = {}
     ws.calculate_dimension(force=True)
     # we find the rows we want
     header = findQBHeader(next(ws.rows))
-    # print(ws.max_row)
     for index, item in enumerate(ws.rows):
         # iterate through all rows and load them into our array
         # minus two because of the annoying sum at the bottom
         if 1 <= index < (ws.max_row - 3):
             record = _loadRow(item, index, header)
             if record:
+                # we just store the last 5 digits. this is typically good enough
                 record.invoiceNo = record.invoiceNo[:5]
                 if record.invoiceNo in consolidate:
                     # if there is a collision we add the line number for usability and increment the totaldue amount
                     consolidate[record.invoiceNo].totalDue += record.totalDue
-                    consolidate[record.invoiceNo].line.append(record.line)
+                    consolidate[record.invoiceNo].line.extend(record.line)
                 else:
                     consolidate[record.invoiceNo] = record
         # make a list out of the values so we can iterate
     wb.close()
     return list(consolidate.values())
     
-def _loadRow(row: List, rowNo: int, head: qbFormat) -> Union[classes.Record, None]:
+def _loadRow(row: List, rowNo: int, head: qbFormat) -> Union[classes.Record, None]: #type: ignore
     """_loadRow takes a row from a openpyxl workbook and returns a Record corresponding to the row. the Row no is passed along just to build the Record"""
     """ Returns None if we don't care about the row in question"""
     # if this is accounts receivable we return none. else we use the header data to tell us where to get the info
-    return classes.Record(row[head.num].value, row[head.date].value, row[head.name].value, row[head.amount].value, rowNo, False) if "Accounts Receivable" in row[head.account].value else None
+    try:
+        return classes.Record(row[head.num].value, row[head.date].value, row[head.name].value, row[head.amount].value, rowNo, False) if "Accounts Receivable" in row[head.account].value else None
+    except TypeError as e:
+        # this is pretty lazy, but we get type errors when the row is empty. this should make this work more often
+        return None

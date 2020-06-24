@@ -2,6 +2,7 @@
     Standard error handling for our program
 """
 import logging
+import functools
 from typing import Callable
 
 class FileLoadError(Exception):
@@ -12,22 +13,24 @@ class ComparisonError(Exception):
     """Error when the files cannot be compared"""
     pass
 
-def FileLoadDecorator(function: Callable):
+def FileLoadDecorator(function: Callable): #type: ignore
     """This is probably bad practice. We condense down the error to a fileloaderror for easier handling on the frontend"""
-    def wrapper(name):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs): #type: ignore
         try:
-            return function(name)
-        except Exception:
-            logging.exception("Serious error parsing file")
-            raise FileLoadError
+            return function(*args, **kwargs)
+        except Exception as e:
+            logging.exception(f"Serious error parsing file: {e}")
+            raise FileLoadError(e)
     return wrapper
 
-def ComparisonDecorator(function: Callable):
+def ComparisonDecorator(function: Callable): #type: ignore
     """Similar to FileLoadDecorator, but for the comparison"""
-    def wrapper(first, second):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs): #type: ignore
         try:
-            return function(first, second)
-        except Exception:
-            logging.exception("Serious error comparing file")
-            raise ComparisonError
+            return function(*args, **kwargs)
+        except Exception as e:
+            logging.exception(f"Serious error comparing file: {e}")
+            raise ComparisonError(e)
     return wrapper
