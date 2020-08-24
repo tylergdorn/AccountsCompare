@@ -97,7 +97,7 @@ def _loadRow(row: List, rowNo: int, head: qbFormat) -> Union[classes.Record, Non
     """ Returns None if we don't care about the row in question"""
     # if this is accounts receivable we return none. else we use the header data to tell us where to get the info
     try:
-        return classes.Record(row[head.num].value, row[head.date].value, row[head.name].value, row[head.amount].value, rowNo, False) if "Accounts Receivable" in row[head.account].value else None
+        return classes.Record(row[head.num].value, row[head.date].value, row[head.name].value, row[head.amount].value, rowNo, False)
     except TypeError as e:
         # this is pretty lazy, but we get type errors when the row is empty. this should make this work more often
         return None
