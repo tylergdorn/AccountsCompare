@@ -42,6 +42,8 @@ def mainGui() -> None:
 
     while True:
         event, values = fileSelectionWindow.Read()
+        if event == sg.WIN_CLOSED:
+            break
         if event == "helpAlPro":
             sg.popup("The alpro file should be a tab separated file with the following fields in any order:\nInvoiceNo, InvoiceDate, AgencyName, TotalDue")
         if event == "helpQB":
